@@ -11,6 +11,12 @@ var config = {
     height: window.innerHeight,
     backgroundColor: '#badc58',
     pixelArt: true,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 }
+        }
+    },
     scene: [
         Boot,
         Preloader,

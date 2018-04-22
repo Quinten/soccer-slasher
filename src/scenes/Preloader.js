@@ -29,6 +29,7 @@ class Preloader extends Phaser.Scene {
         // ...
         this.load.image('tiles', 'tiles.png');
         this.load.tilemapTiledJSON('map', 'map.json');
+        this.load.spritesheet('player', 'player.png', { frameWidth: 16, frameHeight: 16 });
 
         //this.load.audioSprite('sfxone', ['sfxone.ogg', 'sfxone.mp3'], 'sfxone.json');
 
