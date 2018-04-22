@@ -3,15 +3,12 @@ class Startscreen extends Phaser.Scene {
     constructor (config)
     {
         super((config) ? config : { key: 'startscreen' });
-        this.background = undefined;
         this.nextScene = 'level';
         this.credits = undefined;
     }
 
     create ()
     {
-        this.background = this.add.graphics();
-
         this.credits = this.make.text({
             x: window.innerWidth / 2,
             y: window.innerHeight / 2 + 8,
@@ -39,9 +36,6 @@ class Startscreen extends Phaser.Scene {
         this.credits.x = window.innerWidth / 2;
         this.credits.y = window.innerHeight / 2 + 8;
         this.cameras.main.setViewport(0, 0, window.innerWidth, window.innerHeight);
-        this.background.clear();
-        this.background.fillStyle(0xbadc58, 1);
-        this.background.fillRect(0, 0, window.innerWidth, window.innerHeight);
         this.sys.game.config.width = window.innerWidth;
         this.sys.game.config.height = window.innerHeight;
     }

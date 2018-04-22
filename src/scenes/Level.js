@@ -4,13 +4,18 @@ class Level extends Phaser.Scene {
     {
         super((config) ? config : { key: 'level' });
         this.nextScene = 'startscreen';
-        this.background = undefined;
+        this.map = undefined;
+        this.tiles = undefined;
+        this.layer = undefined;
     }
 
     create()
     {
-        this.background = this.add.graphics();
-        //setTimeout(() => {this.input.on('pointerup', this.tapUp, this);}, 1000);
+        this.map = this.make.tilemap({ key: 'map' });
+        this.tiles = this.map.addTilesetImage('tiles', 'tiles');
+        this.layer = this.map.createStaticLayer(0, this.tiles, 0, 0);
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
         // override window resize function
         window.onresize = () => {
             this.sys.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0);
@@ -20,24 +25,10 @@ class Level extends Phaser.Scene {
     }
 
     resizeField() {
-        let camX = (window.innerWidth / 2) - (this.fieldSize * this.tileSize / 2);
-        let camY = (window.innerHeight / 2) - (this.fieldSize * this.tileSize / 2);
         this.cameras.main.setViewport(0, 0, window.innerWidth, window.innerHeight);
-        this.cameras.main.scrollX = -camX;
-        this.cameras.main.scrollY = -camY;
-        this.background.clear();
-        this.background.fillStyle(0xbadc58, 1);
-        this.background.fillRect(0, 0, window.innerWidth, window.innerHeight);
-        this.background.x = -camX;
-        this.background.y = -camY;
         this.sys.game.config.width = window.innerWidth;
         this.sys.game.config.height = window.innerHeight;
     }
-
-    tapUp() {
-        this.scene.start(this.nextScene);
-    }
-
 }
 
 export default Level;

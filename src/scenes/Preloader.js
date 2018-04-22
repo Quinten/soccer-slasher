@@ -27,14 +27,8 @@ class Preloader extends Phaser.Scene {
 
         // Load assets here
         // ...
-        /*
-        this.load.spritesheet([
-            { key: 'editorbuttons', config: { frameWidth: 64, frameHeight: 64 } },
-            { key: 'tiles', config: { frameWidth: 64, frameHeight: 64 } },
-            { key: 'shards', config: { frameWidth: 16, frameHeight: 16 } }
-        ]);
-        this.load.image('hand');
-        */
+        this.load.image('tiles', 'tiles.png');
+        this.load.tilemapTiledJSON('map', 'map.json');
 
         //this.load.audioSprite('sfxone', ['sfxone.ogg', 'sfxone.mp3'], 'sfxone.json');
 

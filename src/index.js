@@ -5,11 +5,12 @@ import Level from './scenes/Level.js';
 import Startscreen from './scenes/Startscreen.js';
 
 var config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     parent: 'phaser-game',
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: '#badc58',
+    pixelArt: true,
     scene: [
         Boot,
         Preloader,
