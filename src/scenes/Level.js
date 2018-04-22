@@ -28,6 +28,7 @@ class Level extends Phaser.Scene {
         this.tiles = this.map.addTilesetImage('tiles', 'tiles');
         this.layer = this.map.createStaticLayer(0, this.tiles, 0, 0);
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.map.setCollisionBetween(0, 1);
 
         this.anims.create({
@@ -69,6 +70,7 @@ class Level extends Phaser.Scene {
         });
 
         this.player = this.physics.add.sprite(50, 100, 'player', 1);
+        this.player.setCollideWorldBounds(true);
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setRoundPixels(true);
         this.physics.add.collider(this.player, this.layer);
@@ -88,6 +90,7 @@ class Level extends Phaser.Scene {
         for (var e = 0; e < this.spawnpoints.length; e++) {
             var spawnpoint = this.spawnpoints[e];
             var enemy = this.physics.add.sprite(spawnpoint.x, spawnpoint.y, 'enemy', 1);
+            enemy.setCollideWorldBounds(true);
             this.physics.add.collider(enemy, this.layer);
             enemy.pathfinding = {
                 left: 0,
@@ -149,20 +152,6 @@ class Level extends Phaser.Scene {
             this.player.anims.play('down', true);
         } else {
             this.player.anims.stop();
-        }
-
-        // wrap the player
-        if (this.player.body.x > this.map.widthInPixels) {
-            this.player.body.x -= this.map.widthInPixels;
-        }
-        if (this.player.body.x < 0) {
-            this.player.body.x += this.map.widthInPixels;
-        }
-        if (this.player.body.y > this.map.heightInPixels) {
-            this.player.body.y -= this.map.heightInPixels;
-        }
-        if (this.player.body.y < 0) {
-            this.player.body.y += this.map.heightInPixels;
         }
 
         // wrap the ball
