@@ -19,7 +19,7 @@ class Level extends Phaser.Scene {
             {"x": 1536, "y":512},
             {"x": 512, "y":1536}
         ];
-        this.time = 0;
+        this.updateTime = 0;
     }
 
     create()
@@ -31,43 +31,54 @@ class Level extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.map.setCollisionBetween(0, 1);
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('player', { start: 8, end: 9 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('player', { start: 1, end: 2 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'up',
-            frames: this.anims.generateFrameNumbers('player', { start: 11, end: 13 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'down',
-            frames: this.anims.generateFrameNumbers('player', { start: 4, end: 6 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'eup',
-            frames: this.anims.generateFrameNumbers('enemy', { start: 11, end: 13 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'edown',
-            frames: this.anims.generateFrameNumbers('enemy', { start: 4, end: 6 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        if (!this.anims.get('left')) {
+            this.anims.create({
+                key: 'left',
+                frames: this.anims.generateFrameNumbers('player', { start: 8, end: 9 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
+        if (!this.anims.get('right')) {
+            this.anims.create({
+                key: 'right',
+                frames: this.anims.generateFrameNumbers('player', { start: 1, end: 2 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
+        if (!this.anims.get('up')) {
+            this.anims.create({
+                key: 'up',
+                frames: this.anims.generateFrameNumbers('player', { start: 11, end: 13 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
+        if (!this.anims.get('down')) {
+            this.anims.create({
+                key: 'down',
+                frames: this.anims.generateFrameNumbers('player', { start: 4, end: 6 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
+        if (!this.anims.get('eup')) {
+            this.anims.create({
+                key: 'eup',
+                frames: this.anims.generateFrameNumbers('enemy', { start: 11, end: 13 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
+        if (!this.anims.get('edown')) {
+            this.anims.create({
+                key: 'edown',
+                frames: this.anims.generateFrameNumbers('enemy', { start: 4, end: 6 }),
+                frameRate: 10,
+                repeat: -1
+            });
+        }
 
         this.player = this.physics.add.sprite(50, 100, 'player', 1);
         this.player.setCollideWorldBounds(true);
@@ -92,6 +103,8 @@ class Level extends Phaser.Scene {
             var enemy = this.physics.add.sprite(spawnpoint.x, spawnpoint.y, 'enemy', 1);
             enemy.setCollideWorldBounds(true);
             this.physics.add.collider(enemy, this.layer);
+            this.physics.add.collider(enemy, this.ball, this.enemyBallCollide, undefined, this);
+            this.physics.add.collider(enemy, this.player, this.enemyPlayerCollide, undefined, this);
             enemy.pathfinding = {
                 left: 0,
                 right: 0,
@@ -118,15 +131,42 @@ class Level extends Phaser.Scene {
     }
 
     enemyEnemyCollide(enemyA, enemyB) {
-        enemyA.pathfinding.left = this.time;
-        enemyB.pathfinding.right = this.time;
-        enemyA.pathfinding.up = this.time;
-        enemyB.pathfinding.down = this.time;
+        enemyA.pathfinding.left = this.updateTime;
+        enemyB.pathfinding.right = this.updateTime;
+        enemyA.pathfinding.up = this.updateTime;
+        enemyB.pathfinding.down = this.updateTime;
+    }
+
+    enemyBallCollide(enemy, ball) {
+        enemy.visible = false;
+        enemy.body.enable = false;
+        this.cameras.main.shake(500);
+
+        let restart = true;
+        for (var e = 0; e < this.enemies.length; e++) {
+            if (this.enemies[e].visible) {
+                restart = false;
+            }
+        }
+        if (restart) {
+            this.time.delayedCall(4000, () => {
+                this.scene.restart();
+            }, [], this);
+        }
+    }
+
+    enemyPlayerCollide(enemy, player) {
+        player.visible = false;
+        player.body.enable = false;
+        this.cameras.main.shake(500);
+        this.time.delayedCall(4000, () => {
+            this.scene.restart();
+        }, [], this);
     }
 
     update(time, delta) {
 
-        this.time = time;
+        this.updateTime = time;
 
         this.player.body.setVelocity(0);
 
