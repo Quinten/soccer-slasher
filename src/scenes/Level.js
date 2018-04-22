@@ -10,6 +10,16 @@ class Level extends Phaser.Scene {
         this.player = undefined;
         this.cursors = undefined;
         this.ball = undefined;
+        this.enemies = undefined;
+        this.spawnpoints = [
+            {"x": 2000, "y":2000},
+            {"x": 48, "y":2000},
+            {"x": 2000, "y":48},
+            {"x": 1024, "y":1024},
+            {"x": 1536, "y":512},
+            {"x": 512, "y":1536}
+        ];
+        this.finder = undefined;
     }
 
     create()
@@ -45,6 +55,19 @@ class Level extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'eup',
+            frames: this.anims.generateFrameNumbers('enemy', { start: 11, end: 13 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'edown',
+            frames: this.anims.generateFrameNumbers('enemy', { start: 4, end: 6 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
         this.player = this.physics.add.sprite(50, 100, 'player', 1);
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setRoundPixels(true);
@@ -60,6 +83,24 @@ class Level extends Phaser.Scene {
         this.physics.add.collider(this.player, this.ball);
         this.physics.add.collider(this.ball, this.layer);
 
+        this.enemies = [];
+
+        for (var e = 0; e < this.spawnpoints.length; e++) {
+            var spawnpoint = this.spawnpoints[e];
+            var enemy = this.physics.add.sprite(spawnpoint.x, spawnpoint.y, 'enemy', 1);
+            this.physics.add.collider(enemy, this.layer);
+            enemy.pathfinding = {
+                left: 0,
+                right: 0,
+                up: 0,
+                down: 0,
+                walkspeed: 64,
+                spawnpoint: {x: spawnpoint.x, y: spawnpoint.y}
+            };
+
+            this.enemies.push(enemy);
+        }
+
         // override window resize function
         window.onresize = () => {
             this.sys.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0);
@@ -69,6 +110,7 @@ class Level extends Phaser.Scene {
     }
 
     update(time, delta) {
+
         this.player.body.setVelocity(0);
 
         if (this.cursors.left.isDown) {
@@ -123,7 +165,56 @@ class Level extends Phaser.Scene {
             this.ball.body.y += this.map.heightInPixels;
         }
 
-        console.log(this.cameras.main.roundPixels);
+        // enemy logic
+        for (var e = 0; e < this.enemies.length; e++) {
+            var enemy = this.enemies[e];
+            enemy.body.velocity.set(0);
+            let targetAnim = 'edown';
+
+            if (enemy.body.blocked.left) {
+                enemy.pathfinding.left = time;
+            }
+            if (enemy.body.blocked.right) {
+                enemy.pathfinding.right = time;
+            }
+            if (enemy.body.blocked.up || Math.abs(this.player.body.y - enemy.body.y) < 2) {
+                enemy.pathfinding.up = time;
+            }
+            if (enemy.body.blocked.down) {
+                enemy.pathfinding.down = time;
+            }
+
+            if ((Math.floor(enemy.body.x) > Math.floor(this.player.body.x)) && ((time - enemy.pathfinding.left) > 1000)) {
+                enemy.body.velocity.x = -enemy.pathfinding.walkspeed;
+            } else if ((Math.floor(enemy.body.x) < Math.floor(this.player.body.x)) && ((time - enemy.pathfinding.right) > 1000)) {
+                enemy.body.velocity.x = enemy.pathfinding.walkspeed;
+            } else {
+                if ((time - enemy.pathfinding.left) > 1000) {
+                    enemy.body.velocity.x = -enemy.pathfinding.walkspeed;
+                } else if ((time - enemy.pathfinding.right) > 1000) {
+                    enemy.body.velocity.x = enemy.pathfinding.walkspeed;
+                }
+            }
+
+            if ((Math.floor(enemy.body.y) > Math.floor(this.player.body.y)) && ((time - enemy.pathfinding.up) > 1000)) {
+                enemy.body.velocity.y = -enemy.pathfinding.walkspeed;
+                targetAnim = 'eup';
+            } else if ((Math.floor(enemy.body.y) < Math.floor(this.player.body.y)) && ((time - enemy.pathfinding.down) > 1000)) {
+                enemy.body.velocity.y = enemy.pathfinding.walkspeed;
+                targetAnim = 'edown';
+            } else {
+                if ((time - enemy.pathfinding.up) > 1000) {
+                    enemy.body.velocity.y = -enemy.pathfinding.walkspeed;
+                    targetAnim = 'eup';
+                } else if ((time - enemy.pathfinding.down) > 1000) {
+                    enemy.body.velocity.y = enemy.pathfinding.walkspeed;
+                    targetAnim = 'edown';
+                }
+            }
+
+            enemy.anims.play(targetAnim, true);
+        }
+
     }
 
     resizeField() {
