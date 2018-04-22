@@ -19,7 +19,7 @@ class Level extends Phaser.Scene {
             {"x": 1536, "y":512},
             {"x": 512, "y":1536}
         ];
-        this.finder = undefined;
+        this.time = 0;
     }
 
     create()
@@ -98,6 +98,11 @@ class Level extends Phaser.Scene {
                 spawnpoint: {x: spawnpoint.x, y: spawnpoint.y}
             };
 
+            for (var b = 0; b < this.enemies.length; b++) {
+                var enemyB = this.enemies[b];
+                this.physics.add.collider(enemy, enemyB, this.enemyEnemyCollide, undefined, this);
+            }
+
             this.enemies.push(enemy);
         }
 
@@ -109,7 +114,16 @@ class Level extends Phaser.Scene {
         this.resizeField();
     }
 
+    enemyEnemyCollide(enemyA, enemyB) {
+        enemyA.pathfinding.left = this.time;
+        enemyB.pathfinding.right = this.time;
+        enemyA.pathfinding.up = this.time;
+        enemyB.pathfinding.down = this.time;
+    }
+
     update(time, delta) {
+
+        this.time = time;
 
         this.player.body.setVelocity(0);
 
