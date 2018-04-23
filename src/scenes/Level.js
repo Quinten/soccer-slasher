@@ -27,6 +27,8 @@ class Level extends Phaser.Scene {
         this.redEmitter = undefined;
         this.blueShards = undefined;
         this.redShards = undefined;
+        this.squeeknoise = undefined;
+        this.whistlenoise = undefined;
     }
 
     create()
@@ -165,6 +167,11 @@ class Level extends Phaser.Scene {
             rotate: { min: -540, max: 540 }
         });
 
+        this.squeeknoise = this.sound.add('squeek');
+
+        this.whistlenoise = this.sound.add('whistle');
+        this.whistlenoise.play();
+
         // override window resize function
         window.onresize = () => {
             this.sys.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0);
@@ -187,6 +194,7 @@ class Level extends Phaser.Scene {
         enemy.body.enable = false;
         this.cameras.main.shake(500);
         this.redEmitter.explode(20, enemy.body.x, enemy.body.y);
+        this.squeeknoise.play();
 
         let restart = true;
         for (var e = 0; e < this.enemies.length; e++) {
@@ -208,6 +216,8 @@ class Level extends Phaser.Scene {
         player.body.enable = false;
         this.cameras.main.shake(500);
         this.blueEmitter.explode(20, player.body.x, player.body.y);
+        this.squeeknoise.play();
+
         this.losetext.visible = true;
         this.time.delayedCall(4000, () => {
             this.flashColor = {r: 235, g: 77, b: 75};

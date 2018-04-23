@@ -5,6 +5,7 @@ class Startscreen extends Phaser.Scene {
         super((config) ? config : { key: 'startscreen' });
         this.nextScene = 'level';
         this.credits = undefined;
+        this.backgroundnoise = undefined;
     }
 
     create ()
@@ -12,6 +13,10 @@ class Startscreen extends Phaser.Scene {
         this.credits = this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'startscreen');
 
         this.input.on('pointerup', this.tapUp, this);
+
+        this.backgroundnoise = this.sound.add('backgroundnoise');
+        this.backgroundnoise.loop = true;
+        this.backgroundnoise.play();
 
         // override window resize function
         window.onresize = () => {

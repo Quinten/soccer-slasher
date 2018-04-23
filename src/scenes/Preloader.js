@@ -39,6 +39,9 @@ class Preloader extends Phaser.Scene {
         this.load.spritesheet('redshards', 'redshards.png', { frameWidth: 8, frameHeight: 8 });
 
         //this.load.audioSprite('sfxone', ['sfxone.ogg', 'sfxone.mp3'], 'sfxone.json');
+        this.load.audio('backgroundnoise', ['backgroundnoise.ogg', 'backgroundnoise.mp3']);
+        this.load.audio('squeek', ['squeek.ogg', 'squeek.mp3']);
+        this.load.audio('whistle', ['whistle.ogg', 'whistle.mp3']);
 
     }
 
