@@ -81,7 +81,7 @@ class Level extends Phaser.Scene {
         }
 
         this.player = this.physics.add.sprite(50, 100, 'player', 1);
-        this.player.setCollideWorldBounds(true);
+        //this.player.setCollideWorldBounds(true);
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setRoundPixels(true);
         this.physics.add.collider(this.player, this.layer);
@@ -101,7 +101,7 @@ class Level extends Phaser.Scene {
         for (var e = 0; e < this.spawnpoints.length; e++) {
             var spawnpoint = this.spawnpoints[e];
             var enemy = this.physics.add.sprite(spawnpoint.x, spawnpoint.y, 'enemy', 1);
-            enemy.setCollideWorldBounds(true);
+            //enemy.setCollideWorldBounds(true);
             this.physics.add.collider(enemy, this.layer);
             this.physics.add.collider(enemy, this.ball, this.enemyBallCollide, undefined, this);
             this.physics.add.collider(enemy, this.player, this.enemyPlayerCollide, undefined, this);
@@ -208,6 +208,44 @@ class Level extends Phaser.Scene {
             this.ball.body.y += this.map.heightInPixels;
         }
 
+        // wrap the player
+        if (this.player.body.x > this.map.widthInPixels) {
+            this.player.body.x -= this.map.widthInPixels;
+            for (var e = 0; e < this.enemies.length; e++) {
+                var enemy = this.enemies[e];
+                enemy.pathfinding.left = time + 2000;
+                enemy.pathfinding.up = time + 2000;
+                enemy.pathfinding.down = time + 2000;
+            }
+        }
+        if (this.player.body.x < 0) {
+            this.player.body.x += this.map.widthInPixels;
+            for (var e = 0; e < this.enemies.length; e++) {
+                var enemy = this.enemies[e];
+                enemy.pathfinding.right = time + 2000;
+                enemy.pathfinding.up = time + 2000;
+                enemy.pathfinding.down = time + 2000;
+            }
+        }
+        if (this.player.body.y > this.map.heightInPixels) {
+            this.player.body.y -= this.map.heightInPixels;
+            for (var e = 0; e < this.enemies.length; e++) {
+                var enemy = this.enemies[e];
+                enemy.pathfinding.right = time + 2000;
+                enemy.pathfinding.left = time + 2000;
+                enemy.pathfinding.up = time + 2000;
+            }
+        }
+        if (this.player.body.y < 0) {
+            this.player.body.y += this.map.heightInPixels;
+            for (var e = 0; e < this.enemies.length; e++) {
+                var enemy = this.enemies[e];
+                enemy.pathfinding.right = time + 2000;
+                enemy.pathfinding.left = time + 2000;
+                enemy.pathfinding.down = time + 2000;
+            }
+        }
+
         // enemy logic
         for (var e = 0; e < this.enemies.length; e++) {
             var enemy = this.enemies[e];
@@ -256,6 +294,20 @@ class Level extends Phaser.Scene {
             }
 
             enemy.anims.play(targetAnim, true);
+
+            // wrap the enemy
+            if (enemy.body.x > this.map.widthInPixels) {
+                enemy.body.x -= this.map.widthInPixels;
+            }
+            if (enemy.body.x < 0) {
+                enemy.x += this.map.widthInPixels;
+            }
+            if (enemy.body.y > this.map.heightInPixels) {
+                enemy.body.y -= this.map.heightInPixels;
+            }
+            if (enemy.body.y < 0) {
+                enemy.body.y += this.map.heightInPixels;
+            }
         }
 
     }
