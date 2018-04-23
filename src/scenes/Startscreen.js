@@ -9,18 +9,7 @@ class Startscreen extends Phaser.Scene {
 
     create ()
     {
-        this.credits = this.make.text({
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2 + 8,
-            text: "soccer slasher\nclick anywhere",
-            origin: { x: .5, y: .5 },
-            style: {
-                font: 'normal 18px monospace',
-                fill: '#dff9fb',
-                align: 'center',
-                wordWrap: { width: 320, useAdvancedWrap: true }
-            }
-        });
+        this.credits = this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'startscreen');
 
         this.input.on('pointerup', this.tapUp, this);
 
@@ -34,7 +23,7 @@ class Startscreen extends Phaser.Scene {
 
     resizeField() {
         this.credits.x = window.innerWidth / 2;
-        this.credits.y = window.innerHeight / 2 + 8;
+        this.credits.y = window.innerHeight / 2;
         this.cameras.main.setViewport(0, 0, window.innerWidth, window.innerHeight);
         this.sys.game.config.width = window.innerWidth;
         this.sys.game.config.height = window.innerHeight;

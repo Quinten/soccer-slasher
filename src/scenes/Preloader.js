@@ -32,6 +32,9 @@ class Preloader extends Phaser.Scene {
         this.load.spritesheet('player', 'player.png', { frameWidth: 16, frameHeight: 16 });
         this.load.image('ball', 'ball.png');
         this.load.spritesheet('enemy', 'enemy.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.image('startscreen', 'startscreen.png');
+        this.load.image('losetext', 'losetext.png');
+        this.load.image('wintext', 'wintext.png');
 
         //this.load.audioSprite('sfxone', ['sfxone.ogg', 'sfxone.mp3'], 'sfxone.json');
 

@@ -21,6 +21,8 @@ class Level extends Phaser.Scene {
         ];
         this.updateTime = 0;
         this.flashColor = {r: 186, g: 220, b: 88};
+        this.losetext = undefined;
+        this.wintext = undefined;
     }
 
     create()
@@ -123,6 +125,14 @@ class Level extends Phaser.Scene {
             this.enemies.push(enemy);
         }
 
+        this.losetext = this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'losetext');
+        this.losetext.visible = false;
+        this.losetext.setScrollFactor(0);
+
+        this.wintext = this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'wintext');
+        this.wintext.visible = false;
+        this.wintext.setScrollFactor(0);
+
         // override window resize function
         window.onresize = () => {
             this.sys.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0);
@@ -152,6 +162,7 @@ class Level extends Phaser.Scene {
             }
         }
         if (restart) {
+            this.wintext.visible = true;
             this.time.delayedCall(4000, () => {
                 this.flashColor = {r: 34, g: 166, b: 179};
                 this.scene.restart();
@@ -163,6 +174,7 @@ class Level extends Phaser.Scene {
         player.visible = false;
         player.body.enable = false;
         this.cameras.main.shake(500);
+        this.losetext.visible = true;
         this.time.delayedCall(4000, () => {
             this.flashColor = {r: 235, g: 77, b: 75};
             this.scene.restart();
@@ -319,6 +331,10 @@ class Level extends Phaser.Scene {
 
     resizeField() {
         this.cameras.main.setViewport(0, 0, window.innerWidth, window.innerHeight);
+        this.losetext.x = window.innerWidth / 2;
+        this.losetext.y = window.innerHeight / 2;
+        this.wintext.x = window.innerWidth / 2;
+        this.wintext.y = window.innerHeight / 2;
         this.sys.game.config.width = window.innerWidth;
         this.sys.game.config.height = window.innerHeight;
     }
