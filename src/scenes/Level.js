@@ -23,6 +23,10 @@ class Level extends Phaser.Scene {
         this.flashColor = {r: 186, g: 220, b: 88};
         this.losetext = undefined;
         this.wintext = undefined;
+        this.blueEmitter = undefined;
+        this.redEmitter = undefined;
+        this.blueShards = undefined;
+        this.redShards = undefined;
     }
 
     create()
@@ -133,6 +137,34 @@ class Level extends Phaser.Scene {
         this.wintext.visible = false;
         this.wintext.setScrollFactor(0);
 
+        this.blueShards = this.add.particles('blueshards');
+        this.blueEmitter = this.blueShards.createEmitter({
+            frame: [0, 1, 2, 3],
+            x: 200,
+            y: 300,
+            speed: { min: -800, max: 800 },
+            angle: { min: 0, max: 360 },
+            scale: { start: 1.5, end: 0 },
+            lifespan: 600,
+            gravityY: 800,
+            frequency: -1,
+            rotate: { min: -540, max: 540 }
+        });
+
+        this.redShards = this.add.particles('redshards');
+        this.redEmitter = this.redShards.createEmitter({
+            frame: [0, 1, 2, 3],
+            x: 200,
+            y: 300,
+            speed: { min: -800, max: 800 },
+            angle: { min: 0, max: 360 },
+            scale: { start: 1.5, end: 0 },
+            lifespan: 600,
+            gravityY: 800,
+            frequency: -1,
+            rotate: { min: -540, max: 540 }
+        });
+
         // override window resize function
         window.onresize = () => {
             this.sys.game.renderer.resize(window.innerWidth, window.innerHeight, 1.0);
@@ -154,6 +186,7 @@ class Level extends Phaser.Scene {
         enemy.visible = false;
         enemy.body.enable = false;
         this.cameras.main.shake(500);
+        this.redEmitter.explode(20, enemy.body.x, enemy.body.y);
 
         let restart = true;
         for (var e = 0; e < this.enemies.length; e++) {
@@ -174,6 +207,7 @@ class Level extends Phaser.Scene {
         player.visible = false;
         player.body.enable = false;
         this.cameras.main.shake(500);
+        this.blueEmitter.explode(20, player.body.x, player.body.y);
         this.losetext.visible = true;
         this.time.delayedCall(4000, () => {
             this.flashColor = {r: 235, g: 77, b: 75};
