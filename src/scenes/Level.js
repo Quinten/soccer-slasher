@@ -20,6 +20,7 @@ class Level extends Phaser.Scene {
             {"x": 512, "y":1536}
         ];
         this.updateTime = 0;
+        this.flashColor = {r: 186, g: 220, b: 88};
     }
 
     create()
@@ -128,6 +129,8 @@ class Level extends Phaser.Scene {
             this.resizeField();
         }
         this.resizeField();
+
+        this.cameras.main.flash(350, this.flashColor.r, this.flashColor.g, this.flashColor.b);
     }
 
     enemyEnemyCollide(enemyA, enemyB) {
@@ -150,6 +153,7 @@ class Level extends Phaser.Scene {
         }
         if (restart) {
             this.time.delayedCall(4000, () => {
+                this.flashColor = {r: 34, g: 166, b: 179};
                 this.scene.restart();
             }, [], this);
         }
@@ -160,6 +164,7 @@ class Level extends Phaser.Scene {
         player.body.enable = false;
         this.cameras.main.shake(500);
         this.time.delayedCall(4000, () => {
+            this.flashColor = {r: 235, g: 77, b: 75};
             this.scene.restart();
         }, [], this);
     }
