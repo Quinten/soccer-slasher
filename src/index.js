@@ -25,4 +25,13 @@ var config = {
     ]
 };
 
+// improve iframe focus
+window.addEventListener('load', function () {
+    window.focus();
+    document.body.addEventListener('click',function(e) {
+        window.focus();
+    },false);
+});
+
+// start game
 window.game = new Phaser.Game(config);
